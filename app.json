@@ -21,10 +21,16 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.ortizdtz.SuperList"
     },
     "web": {
       "favicon": "./assets/iconefodastico.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1596272f-fcfc-43a5-a7b6-052c4efa7631"
+      }
     }
   }
 }

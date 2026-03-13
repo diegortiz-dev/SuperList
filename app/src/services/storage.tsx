@@ -14,6 +14,7 @@ export type Item = {
   id: string;
   name: string;
   quantity: number;
+  unit?: string;
   price?: number;
   completed: boolean;
 };
@@ -67,7 +68,7 @@ export async function DeletarLista(id: string): Promise<void> {
   }
 }
 
-export async function SalvarItem(id: string, name: string, quantity: number, price?: number): Promise<Item> {
+export async function SalvarItem(id: string, name: string, quantity: number, unit?: string, price?: number): Promise<Item> {
   try {
     const listas = await carregarListas();
     const lista = listas.find(l => l.id === id);
@@ -78,6 +79,7 @@ export async function SalvarItem(id: string, name: string, quantity: number, pri
       id: Date.now().toString(),
       name: name,
       quantity: quantity,
+      unit: unit,
       price: price,
       completed: false
     };

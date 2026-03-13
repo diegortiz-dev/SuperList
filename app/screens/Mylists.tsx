@@ -128,6 +128,14 @@ export default function MyLists() {
                 onScrollBeginDrag={closeMenu}
             >
 
+                {listas.length === 0 && (
+                    <View style={styles.emptyState}>
+                        <Ionicons name="cart-outline" size={64} color="#b0b0b0" />
+                        <Text style={styles.emptyTitle}>Nenhuma lista ainda</Text>
+                        <Text style={styles.emptySubtitle}>Crie sua primeira lista de compras tocando em "Nova Lista"</Text>
+                    </View>
+                )}
+
                 {listas.map((lista) => (
 
                     <TouchableOpacity
@@ -191,7 +199,7 @@ export default function MyLists() {
 
             </ScrollView>
 
-            {/* Menu dropdown como Modal para sobrepor corretamente */}
+        
             <Modal
                 visible={openedMenuId !== null}
                 transparent
@@ -245,7 +253,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#d5d5d5',
+        backgroundColor: '#ebebeb',
         paddingHorizontal: 16,
         paddingTop: 16,
     },
@@ -409,6 +417,28 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#2f7d32',
         fontWeight: 'bold',
+    },
+
+    emptyState: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 60,
+        paddingHorizontal: 20,
+    },
+
+    emptyTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#555555',
+        marginTop: 16,
+        marginBottom: 8,
+    },
+
+    emptySubtitle: {
+        fontSize: 14,
+        color: '#888888',
+        textAlign: 'center',
+        lineHeight: 20,
     },
 
 });

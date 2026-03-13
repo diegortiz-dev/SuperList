@@ -51,6 +51,11 @@ export default function ListDetails() {
 		}, 0);
 	}, [itens]);
 
+	function formatarQtd(qty: number, unit?: string): string {
+		const qtdStr = qty % 1 === 0 ? `${qty}` : `${qty}`.replace('.', ',');
+		return unit ? `${qtdStr} ${unit}` : qtdStr;
+	}
+
 	function formatarPrecoInput(valor: number) {
 		return valor.toFixed(2).replace('.', ',');
 	}
@@ -117,10 +122,10 @@ export default function ListDetails() {
 				</TouchableOpacity>
 			</View>
 
-			{/* Content */}
+			
 			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
-				{/* Summary card */}
+				
 				<View style={styles.summaryCard}>
 					<View style={styles.summaryRow}>
 						<Text style={styles.summaryLabel}>Progresso da compra</Text>
@@ -135,7 +140,7 @@ export default function ListDetails() {
 					</View>
 				</View>
 
-				{/* Items card */}
+				
 				<View style={styles.itemsCard}>
 					{itens.length === 0 ? (
 						<Text style={styles.emptyText}>Nenhum item adicionado.</Text>
@@ -156,7 +161,7 @@ export default function ListDetails() {
 									<Text style={[styles.itemTitle, item.completed && styles.itemTitleCompleted]}>
 										{item.name}
 									</Text>
-									<Text style={styles.itemSubtitle}>Quantidade: {item.quantity}</Text>
+									<Text style={styles.itemSubtitle}>Quantidade: {formatarQtd(item.quantity, item.unit)}</Text>
 									{item.completed && (
 										<View style={styles.priceRow}>
 											<Text style={styles.priceLabel}>Valor por unidade/kg</Text>
@@ -180,7 +185,7 @@ export default function ListDetails() {
 				</View>
 			</ScrollView>
 
-			{/* Footer */}
+			
 			<View style={styles.footer}>
 				<TouchableOpacity
 					style={[styles.footerButton, finalizada ? styles.footerButtonReativar : styles.footerButtonFinalizar]}
@@ -203,7 +208,7 @@ export default function ListDetails() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#d5d5d5',
+		backgroundColor: '#ebebeb',
 		paddingHorizontal: 16,
 		paddingTop: 16,
 	},
@@ -408,9 +413,9 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: '#d5d5d5',
+		backgroundColor: '#ebebeb',
 		borderTopWidth: 1,
-		borderTopColor: '#bcbcbc',
+		borderTopColor: '#d0d0d0',
 		paddingHorizontal: 16,
 		paddingVertical: 14,
 	},
