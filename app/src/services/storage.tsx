@@ -18,21 +18,26 @@ export type Item = {
   completed: boolean;
 };
 
-const ITENS_KEY = "itens";
 
-export async function salvarLista(id: string, title: string, itens: Item[], date: string): Promise<Lista> {
+export async function salvarLista(id: string, title: string, itens: Item[], date?: string): Promise<Lista> {
   try {
     const listas = await carregarListas();
-    const novaLista: Lista = {
-      id: Date.now().toString(),
+    const existingIndex = listas.findIndex(lista => lista.id === id);
+    const listaAtualizada: Lista = {
+      id: id || Date.now().toString(),
       title: title,
-      completed: false,
-      date: new Date().toISOString(),
-      itens: [],
+      completed: existingIndex >= 0 ? listas[existingIndex].completed : false,
+      date: date ?? (existingIndex >= 0 ? listas[existingIndex].date : new Date().toISOString()),
+      itens: itens,
     };
-    listas.push(novaLista);
+
+    if (existingIndex >= 0) {
+      listas[existingIndex] = listaAtualizada;
+    } else {
+      listas.push(listaAtualizada);
+    }
     await AsyncStorage.setItem(LISTAS_KEY, JSON.stringify(listas));
-    return novaLista;
+    return listaAtualizada;
   } catch (error) {
     console.error("Erro ao salvar a lista:", error);
     throw error;
@@ -59,5 +64,28 @@ export async function DeletarLista(id: string): Promise<void> {
     await AsyncStorage.setItem(LISTAS_KEY, JSON.stringify(novasListas));
   } catch (error) {
     console.error("Erro ao deletar a lista:", error);
+  }
+}
+
+export async function SalvarItem(id: string, name: string, quantity: number, price?: number): Promise<Item> {
+  try {
+    const listas = await carregarListas();
+    const lista = listas.find(l => l.id === id);
+    if (!lista) {
+      throw new Error("Erro: lista não encontrada");
+    }
+    const novoItem: Item = {
+      id: Date.now().toString(),
+      name: name,
+      quantity: quantity,
+      price: price,
+      completed: false
+    };
+    lista.itens.push(novoItem);
+    await AsyncStorage.setItem(LISTAS_KEY, JSON.stringify(listas));
+    return novoItem;
+  } catch (error) {
+    console.error("Erro ao salvar o item:", error);
+    throw error;
   }
 }

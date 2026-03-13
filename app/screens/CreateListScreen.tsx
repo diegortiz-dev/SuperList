@@ -1,53 +1,149 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import {Ionicons} from '@expo/vector-icons'
+import { SalvarItem, salvarLista, Item } from '../src/services/storage';
 
 type RootStackParamList = { Home: undefined, CreateListScreen: undefined, MyLists: undefined };
 type CreateListScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CreateListScreen'>;
 
 export default function CreateListScreen() {
     const navigation = useNavigation<CreateListScreenNavigationProp>();
+    const [idLista] = useState(() => Date.now().toString());
+    const [tituloLista, setTituloLista] = useState('');
+    const [nomeItem, setNomeItem] = useState('');
+    const [qtdItem, setQtdItem] = useState('');
+    const [itens, setItens] = useState<Item[]>([]);
+    const [listaCriada, setListaCriada] = useState(false);
+
+    async function adicionarItem() {
+        const nome = nomeItem.trim();
+        const quantidade = Number(qtdItem);
+        if (!nome || Number.isNaN(quantidade) || quantidade <= 0) {
+            return;
+        }
+
+        if (!listaCriada) {
+            await salvarLista(idLista, tituloLista.trim() || 'Nova lista', [], new Date().toISOString());
+            setListaCriada(true);
+        }
+
+        const novoItem = await SalvarItem(idLista, nome, quantidade);
+        setItens(prev => [...prev, novoItem]);
+        setNomeItem('');
+        setQtdItem('');
+    }
+
+    async function salvarListaFinal() {
+        await salvarLista(idLista, tituloLista.trim() || 'Nova lista', itens, new Date().toISOString());
+        navigation.goBack();
+
+    }
+
+function renderCard({ item }: { item: Item }) {
+    return (
+      <TouchableOpacity
+        style={styles.carditens}
+        onPress={() => {}}
+      >
+        <Text style={styles.cardNome}>{item.name}</Text>
+        <Text style={styles.cardQtd}>Qtd: {item.quantity}</Text>
+      </TouchableOpacity>
+    );
+}
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                    <Ionicons name="arrow-back" size={32} color="#000000ff" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Nova Lista de Compras</Text>
-            </View>
-            <View style={styles.card}>
-
-                <Text style={styles.title}>Informações da Lista</Text>
-
-                <Text style={styles.title}>Nome da Lista</Text>
-                <TextInput style={styles.input} placeholder="Ex: Compras do mês, Churrasco, feira" />
-                <View style={styles.divider} />
-                <Text style={styles.title}>Adicionar Itens</Text>
-                <View style={styles.row}>
-                    <View style={styles.productColumn}>
-                        <Text style={styles.title}>Produto</Text>
-                        <TextInput style={styles.input} placeholder="Ex:Arroz , feijão, Carne" />
+            
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+            >
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => {navigation.goBack()}}>
+                            <Ionicons name="arrow-back" size={32} color="#000000ff" />
+                        </TouchableOpacity>
+                        <Text style={styles.headerTitle}>Nova Lista de Compras</Text>
                     </View>
-                    <View style={styles.quantityColumn}>
-                        <Text style={styles.title}>Qtd</Text>
-                        <TextInput style={styles.inputSmall} placeholder="1" keyboardType="numeric" />
+                    <View style={styles.card}>
+
+                        <Text style={styles.title}>Informações da Lista</Text>
+
+                        <Text style={styles.title}>Nome da Lista</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Ex: Compras do mês, Churrasco, feira"
+                            value={tituloLista}
+                            onChangeText={setTituloLista}
+                        />
+                        <View style={styles.divider} />
+                        <Text style={styles.title}>Adicionar Itens</Text>
+                        <View style={styles.row}>
+                            <View style={styles.productColumn}>
+                                <Text style={styles.title}>Produto</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ex:Arroz , feijão, Carne"
+                                    value={nomeItem}
+                                    onChangeText={setNomeItem}
+                                />
+                            </View>
+                            <View style={styles.quantityColumn}>
+                                <Text style={styles.title}>Qtd</Text>
+                                <TextInput
+                                    style={styles.inputSmall}
+                                    placeholder="1"
+                                    keyboardType="numeric"
+                                    value={qtdItem}
+                                    onChangeText={setQtdItem}
+                                />
+                            </View>
+                        </View>
+                        <TouchableOpacity style={styles.btn} onPress={adicionarItem}>
+                            <Text style={styles.btnicone}>+   Adicionar</Text>
+                        </TouchableOpacity>
                     </View>
+                    <View style={styles.card}>
+
+                        <Text style={styles.title}>Itens({itens.length}) </Text>
+                        {itens.length === 0 ? (
+                    <Text style={styles.subtitle}>Nenhum item adicionado ainda.</Text>
+                ) : (
+                    <FlatList
+                    data={itens}
+                    keyExtractor={(item: Item) => item.id}
+                    renderItem={renderCard}
+                    contentContainerStyle={styles.lista}
+                    scrollEnabled={false}
+                    />
+                )}
+
+                    </View>
+                </ScrollView>
+
+                <View style={styles.footer}>
+                    <TouchableOpacity style={styles.footerButton} onPress={salvarListaFinal}>
+                        <Text style={styles.footerButtonText}>Salvar lista</Text>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.btn}><Text style={styles.btnicone}>+   Adicionar</Text></TouchableOpacity>
-            </View>
-            <View style={styles.card}>
-
-                <Text style={styles.title}>Itens(0) </Text>
-                {}
-            </View>
-
-        </View>
+            </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    carditens: {
+        backgroundColor: '#f5f5f5',
+        borderRadius: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        marginBottom: 6,
+    },
+
+    lista: {
+        paddingBottom: 14,
+    },
     divider: {
         height: 1,
         backgroundColor: '#cccccc',
@@ -71,10 +167,23 @@ const styles = StyleSheet.create({
         color: '#1a1a1a',
         marginBottom: 20,
     },
+    cardNome: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 4,
+    },
+    cardQtd: {
+        fontSize: 16,
+        color: '#555',
+    },
     container: {
         flex: 1,
         backgroundColor: '#d5d5d5',
         padding: 20,
+    },
+    scrollContent: {
+        paddingBottom: 120,
     },
     header: {
         flexDirection: 'row',
@@ -137,10 +246,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 10,
-        height: 40,
+        height:60,
     },
     btnText: {
-        fontSize: 26,
+        fontSize: 22,
         color: '#ffffff',
         fontWeight: 'bold',
         marginRight: 24,
@@ -149,7 +258,47 @@ const styles = StyleSheet.create({
         fontSize: 22,
         color: '#ffffff',
         fontWeight: 'bold',
-        textAlign: 'center',
+    
+    },
+    btnSecondary: {
+        backgroundColor: '#1a1a1a',
+        borderRadius: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 12,
+        height: 60,
+    },
+    btnSecondaryText: {
+        fontSize: 20,
+        color: '#ffffff',
+        fontWeight: 'bold',
+    },
+    footer: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#d5d5d5',
+        borderTopWidth: 1,
+        borderTopColor: '#bcbcbc',
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+    },
+    footerButton: {
+        backgroundColor: '#1b7a2b',
+        borderRadius: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 60,
+    },
+    footerButtonText: {
+        fontSize: 20,
+        color: '#ffffff',
+        fontWeight: 'bold',
     },
     row: {
         flexDirection: 'row',

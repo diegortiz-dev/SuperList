@@ -1,143 +1,196 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import {Ionicons} from '@expo/vector-icons'
+import { carregarListas, Lista } from '../src/services/storage';
 
 type RootStackParamList = { Home: undefined, CreateListScreen: undefined, MyLists: undefined };
 type MyListsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MyLists'>;
 
 export default function MyLists() {
     const navigation = useNavigation<MyListsScreenNavigationProp>();
+    const [listas, setListas] = useState<Lista[]>([]);
+
+    const carregar = useCallback(async () => {
+        const resultado = await carregarListas();
+        setListas(resultado);
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            carregar();
+        }, [carregar])
+    );
+
+    function formatarData(dataIso: string) {
+        const data = new Date(dataIso);
+        if (Number.isNaN(data.getTime())) {
+            return '';
+        }
+        return data.toLocaleDateString('pt-BR');
+    }
+
+    function formatarPreco(total: number) {
+        const valor = total.toFixed(2).replace('.', ',');
+        return `R$ ${valor}`;
+    }
+
+    function calcularTotalPreco(lista: Lista) {
+        const total = lista.itens.reduce((acc, item) => {
+            if (!item.price || item.price <= 0) {
+                return acc;
+            }
+            return acc + item.price * item.quantity;
+        }, 0);
+        return total > 0 ? formatarPreco(total) : '';
+    }
+
+    function contarMarcados(lista: Lista) {
+        return lista.itens.filter((item) => item.completed).length;
+    }
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                    <Ionicons name="arrow-back" size={32} color="#000000ff" />
+                <View style={styles.headerLeft}>
+                    <TouchableOpacity onPress={() => {navigation.goBack()}}>
+                        <Ionicons name="arrow-back" size={28} color="#000000ff" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Minhas Listas</Text>
+                </View>
+                <TouchableOpacity style={styles.headerButton} onPress={() => {navigation.navigate('CreateListScreen')}}>
+                    <Ionicons name="cart" size={18} color="#ffffff" />
+                    <Text style={styles.headerButtonText}>Nova Lista</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Minhas Listas</Text>
-            </View>
-            <View style={styles.card}>
-
-                <Text style={styles.title}>Informações da Lista</Text>
-
-                <Text style={styles.title}>Nome da Lista</Text>
-                <TextInput style={styles.input} placeholder="Ex: Compras do mês, Churrasco, feira" />
-                <Text style={styles.line}>_________________________________________________________________</Text>
-                <Text style={styles.title}>Adicionar Itens</Text>
-                <Text style={styles.title}>Produto</Text>
-                <TextInput style={styles.input} placeholder="Ex: Arroz, feijão, Carne" />
-                <Text style={styles.title}>Quantidade(unidade/Kg)</Text>
-                <TextInput style={styles.input} placeholder=" 1" />
-                <TouchableOpacity style={styles.btn}><Text style={styles.btnicone}>+   Adicionar</Text></TouchableOpacity>
-            </View>
-            <View style={styles.card}>
-
-                <Text style={styles.title}>Itens(0) </Text>
-                {}
             </View>
 
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                {listas.map((lista) => (
+                    <View key={lista.id} style={styles.listCard}>
+                        <View style={styles.cardTopRow}>
+                            <View style={styles.cardTitleRow}>
+                                <Text style={styles.listTitle}>{lista.title}</Text>
+                                {!lista.completed && (
+                                    <View style={styles.badge}>
+                                        <Text style={styles.badgeText}>Ativa</Text>
+                                    </View>
+                                )}
+                            </View>
+                            <TouchableOpacity>
+                                <Ionicons name="ellipsis-vertical" size={18} color="#111111" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.listDate}>Criada em {formatarData(lista.date)}</Text>
+
+                        <View style={styles.cardBottomRow}>
+                            <Text style={styles.listProgress}>{contarMarcados(lista)}/{lista.itens.length} Itens marcados</Text>
+                            {!!calcularTotalPreco(lista) && <Text style={styles.listPrice}>{calcularTotalPreco(lista)}</Text>}
+                        </View>
+                    </View>
+                ))}
+            </ScrollView>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    line: {
-        color: '#cccccc',
-        marginBottom: 20,
-    },
-    input: {
-        fontSize: 16,
-        color: '#6b6b6bff',
-        fontWeight: 'bold',
-        borderWidth: 1,
-        borderColor: '#cccccc',
-        marginBottom: 10,
-        padding: 10,
-        backgroundColor: '#d1d1d1',
-        borderRadius: 18,
-    },
-    gobackbutton: {
-        fontSize: 50,
-        color: '#1a1a1a',
-        marginBottom: 20,
-    },
     container: {
         flex: 1,
         backgroundColor: '#d5d5d5',
-        padding: 20,
+        paddingHorizontal: 16,
+        paddingTop: 16,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        alignSelf: 'flex-start',
-        marginBottom: 10,
+        justifyContent: 'space-between',
+        marginBottom: 16,
+        marginTop: 20,
+    },
+    headerLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#1a1a1a',
-        marginLeft: 12,
+        marginLeft: 10,
     },
-    card: {
-        backgroundColor: '#ffffff',
-        borderRadius: 20,
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        width: '100%',
-        maxWidth: 420,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-        maxHeight: 500,
-        minHeight: 200,
-        marginTop: 28,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1a1a1a',
-        textAlign: 'left',
-        marginBottom: 10,
-      
-    },
-    subtitle: {
-        fontSize: 15,
-        color: '#656565ff',
-        textAlign: 'center',
-        lineHeight: 22,
-        marginBottom: 30,
-        fontWeight: 'bold',
-    },
-    buttonsContainer: {
-        width: '100%',
-        gap: 14,
-
-    },
-    btn: {
-        backgroundColor: '#1b7a2b',
-        borderRadius: 16,
-        paddingVertical: 16,
-        paddingHorizontal: 20,
+    headerButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: '#1b7a2b',
+        borderRadius: 6,
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        gap: 6,
+        height:50,
         marginTop: 10,
-        height: 40,
     },
-    btnText: {
-        fontSize: 26,
+    headerButtonText: {
+        fontSize: 14,
         color: '#ffffff',
         fontWeight: 'bold',
-        marginRight: 24,
     },
-    btnicone: {
-        fontSize: 22,
+    content: {
+        paddingBottom: 20,
+        gap: 16,
+    },
+    listCard: {
+        backgroundColor: '#ffffff',
+        borderRadius: 14,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: '#8f8f8f',
+    },
+    cardTopRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    cardTitleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+    },
+    listTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#1a1a1a',
+    },
+    badge: {
+        backgroundColor: '#0a7a38',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+    },
+    badgeText: {
+        fontSize: 12,
         color: '#ffffff',
         fontWeight: 'bold',
-        textAlign: 'center',
     },
-    
+    listDate: {
+        fontSize: 12,
+        color: '#8f8f8f',
+        marginTop: 4,
+    },
+    cardBottomRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 12,
+    },
+    listProgress: {
+        fontSize: 14,
+        color: '#3d3d3d',
+    },
+    listPrice: {
+        fontSize: 16,
+        color: '#2f7d32',
+        fontWeight: 'bold',
+    },
 })
