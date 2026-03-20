@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, TouchableWithoutFeedback, Animated, Easing } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -19,6 +19,7 @@ export default function MyLists() {
     const navigation = useNavigation<MyListsScreenNavigationProp>();
 
     const [listas, setListas] = useState<Lista[]>([]);
+    const [sortOrder, setSortOrder] = useState<'recent' | 'oldest'>('recent');
     const [openedMenuId, setOpenedMenuId] = useState<string | null>(null);
     const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
     const menuRefs = useRef<Record<string, View | null>>({});
@@ -144,6 +145,17 @@ export default function MyLists() {
     }
 
     const menuLista = listas.find((l) => l.id === openedMenuId);
+    const listasOrdenadas = useMemo(() => {
+        const copia = [...listas];
+        copia.sort((a, b) => {
+            const dataA = new Date(a.date).getTime();
+            const dataB = new Date(b.date).getTime();
+            const valorA = Number.isNaN(dataA) ? 0 : dataA;
+            const valorB = Number.isNaN(dataB) ? 0 : dataB;
+            return sortOrder === 'recent' ? valorB - valorA : valorA - valorB;
+        });
+        return copia;
+    }, [listas, sortOrder]);
 
     return (
 
@@ -171,6 +183,28 @@ export default function MyLists() {
 
             </Animated.View>
 
+            <View style={styles.filterRow}>
+                <TouchableOpacity
+                    style={[styles.filterButton, sortOrder === 'recent' && styles.filterButtonActive]}
+                    onPress={() => setSortOrder('recent')}
+                    activeOpacity={0.85}
+                >
+                    <Text style={[styles.filterButtonText, sortOrder === 'recent' && styles.filterButtonTextActive]}>
+                        Mais recentes
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[styles.filterButton, sortOrder === 'oldest' && styles.filterButtonActive]}
+                    onPress={() => setSortOrder('oldest')}
+                    activeOpacity={0.85}
+                >
+                    <Text style={[styles.filterButtonText, sortOrder === 'oldest' && styles.filterButtonTextActive]}>
+                        Mais antigas
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
             <Animated.ScrollView
                 contentContainerStyle={styles.content}
                 showsVerticalScrollIndicator={false}
@@ -185,7 +219,7 @@ export default function MyLists() {
                     </Animated.View>
                 )}
 
-                {listas.map((lista) => (
+                {listasOrdenadas.map((lista) => (
 
                     <Animated.View
                         key={lista.id}
@@ -357,6 +391,37 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#ffffff',
         fontWeight: 'bold',
+    },
+
+    filterRow: {
+        flexDirection: 'row',
+        gap: 10,
+        marginBottom: 8,
+    },
+
+    filterButton: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#cfcfcf',
+        paddingVertical: 10,
+        alignItems: 'center',
+    },
+
+    filterButtonActive: {
+        backgroundColor: '#1b7a2b',
+        borderColor: '#1b7a2b',
+    },
+
+    filterButtonText: {
+        fontSize: 13,
+        fontWeight: 'bold',
+        color: '#1a1a1a',
+    },
+
+    filterButtonTextActive: {
+        color: '#ffffff',
     },
 
     content: {
