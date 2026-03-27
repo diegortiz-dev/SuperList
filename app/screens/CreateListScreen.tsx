@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, ScrollView, KeyboardAvoidingView, Platform, Alert, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, KeyboardAvoidingView, Platform, Alert, Animated, Easing } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -33,6 +33,9 @@ export default function CreateListScreen() {
     const cardScale = useRef(new Animated.Value(0.96)).current;
     const footerTranslate = useRef(new Animated.Value(24)).current;
     const useNativeDriver = Platform.OS !== 'web';
+    const quantidadeAtual = Number(qtdItem.replace(',', '.'));
+    const podeAdicionarItem = nomeItem.trim().length > 0 && !Number.isNaN(quantidadeAtual) && quantidadeAtual > 0;
+    const podeSalvarLista = itens.length > 0;
 
     useEffect(() => {
         if (isEditing) {
@@ -78,7 +81,13 @@ export default function CreateListScreen() {
     async function adicionarItem() {
         const nome = nomeItem.trim();
         const quantidade = Number(qtdItem.replace(',', '.'));
-        if (!nome || Number.isNaN(quantidade) || quantidade <= 0) {
+        if (!nome) {
+            Alert.alert('Produto obrigatório', 'Digite o nome do item para adicionar.');
+            return;
+        }
+
+        if (Number.isNaN(quantidade) || quantidade <= 0) {
+            Alert.alert('Quantidade inválida', 'Digite uma quantidade maior que zero.');
             return;
         }
 
@@ -94,9 +103,22 @@ export default function CreateListScreen() {
     }
 
     async function salvarListaFinal() {
+        if (!podeSalvarLista) {
+            Alert.alert('Lista vazia', 'Adicione pelo menos um item antes de salvar a lista.');
+            return;
+        }
+
         await salvarLista(idLista, tituloLista.trim() || 'Nova lista', itens, new Date().toISOString());
         navigation.goBack();
 
+    }
+
+    function handleQtdChange(text: string) {
+        const normalizado = text.replace(',', '.');
+        if (!/^\d*\.?\d*$/.test(normalizado)) {
+            return;
+        }
+        setQtdItem(text.replace('.', ','));
     }
 
 function handleRemover(id: string) {
@@ -176,7 +198,9 @@ function renderCard({ item }: { item: Item }) {
                                     placeholder="1"
                                     keyboardType="decimal-pad"
                                     value={qtdItem}
-                                    onChangeText={setQtdItem}
+                                    onChangeText={handleQtdChange}
+                                    returnKeyType="done"
+                                    onSubmitEditing={adicionarItem}
                                 />
                             </View>
                         </View>
@@ -192,7 +216,12 @@ function renderCard({ item }: { item: Item }) {
                                 </TouchableOpacity>
                             ))}
                         </View>
-                        <TouchableOpacity style={styles.btn} onPress={adicionarItem}>
+                        <TouchableOpacity
+                            style={[styles.btn, !podeAdicionarItem && styles.btnDisabled]}
+                            onPress={adicionarItem}
+                            disabled={!podeAdicionarItem}
+                            activeOpacity={podeAdicionarItem ? 0.8 : 1}
+                        >
                             <Text style={styles.btnicone}>+   Adicionar</Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -215,7 +244,12 @@ function renderCard({ item }: { item: Item }) {
                 </Animated.ScrollView>
 
                 <Animated.View style={[styles.footer, { transform: [{ translateY: footerTranslate }] }]}> 
-                    <TouchableOpacity style={styles.footerButton} onPress={salvarListaFinal}>
+                    <TouchableOpacity
+                        style={[styles.footerButton, !podeSalvarLista && styles.footerButtonDisabled]}
+                        onPress={salvarListaFinal}
+                        disabled={!podeSalvarLista}
+                        activeOpacity={podeSalvarLista ? 0.8 : 1}
+                    >
                         <Text style={styles.footerButtonText}>{isEditing ? 'Salvar alterações' : 'Salvar lista'}</Text>
                     </TouchableOpacity>
                 </Animated.View> 
@@ -359,6 +393,9 @@ const styles = StyleSheet.create({
         marginTop: 14,
         height: 56,
     },
+    btnDisabled: {
+        backgroundColor: '#9fb9a4',
+    },
     btnText: {
         fontSize: 18,
         color: '#ffffff',
@@ -403,6 +440,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         height: 56,
+    },
+    footerButtonDisabled: {
+        backgroundColor: '#9fb9a4',
     },
     footerButtonText: {
         fontSize: 18,

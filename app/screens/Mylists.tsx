@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, TouchableWithoutFeedback, Animated, Easing, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, TouchableWithoutFeedback, Animated, Easing, Platform, useWindowDimensions } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { carregarListas, Lista, DeletarLista, CopiarLista } from '../src/services/storage';
+
+const MENU_WIDTH = 170;
+const MENU_HEIGHT = 160;
+const MENU_MARGIN = 8;
 
 type RootStackParamList = {
   Home: undefined,
@@ -17,6 +21,7 @@ type MyListsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MyLi
 export default function MyLists() {
 
     const navigation = useNavigation<MyListsScreenNavigationProp>();
+    const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
     const [listas, setListas] = useState<Lista[]>([]);
     const [sortOrder, setSortOrder] = useState<'recent' | 'oldest'>('recent');
@@ -107,6 +112,26 @@ export default function MyLists() {
         return lista.itens.filter((item) => item.completed).length;
     }
 
+    function limitarPosicaoMenu(anchorX: number, anchorTop: number, anchorBottom: number) {
+        const left = Math.min(
+            Math.max(anchorX - MENU_WIDTH, MENU_MARGIN),
+            screenWidth - MENU_WIDTH - MENU_MARGIN
+        );
+
+        const espacoAbaixo = screenHeight - anchorBottom - MENU_MARGIN;
+        const espacoAcima = anchorTop - MENU_MARGIN;
+        const abreAcima = espacoAbaixo < MENU_HEIGHT && espacoAcima > espacoAbaixo;
+
+        const topPreferido = abreAcima ? anchorTop - MENU_HEIGHT : anchorBottom;
+
+        const top = Math.min(
+            Math.max(topPreferido, MENU_MARGIN),
+            screenHeight - MENU_HEIGHT - MENU_MARGIN
+        );
+
+        return { x: left, y: top };
+    }
+
     function openMenu(id: string) {
         const ref = menuRefs.current[id];
         if (!ref) return;
@@ -114,7 +139,7 @@ export default function MyLists() {
             (document.activeElement as HTMLElement | null)?.blur();
         }
         ref.measure((_fx, _fy, width, height, px, py) => {
-            setMenuPos({ x: px + width, y: py + height });
+            setMenuPos(limitarPosicaoMenu(px + width, py, py + height));
             setOpenedMenuId(id);
         });
     }
@@ -310,7 +335,7 @@ export default function MyLists() {
                 <TouchableWithoutFeedback onPress={closeMenu}>
                     <View style={styles.modalBackdrop}>
                         <TouchableWithoutFeedback>
-                            <View style={[styles.menuContainer, { top: menuPos.y, right: undefined, left: menuPos.x - 160 }]}>
+                            <View style={[styles.menuContainer, { top: menuPos.y, left: menuPos.x }]}> 
 
                                 <TouchableOpacity
                                     style={styles.menuButton}
@@ -468,7 +493,7 @@ const styles = StyleSheet.create({
         borderColor: '#cfcfcf',
         borderRadius: 10,
         overflow: 'hidden',
-        width: 170,
+        width: MENU_WIDTH,
         elevation: 12,
         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.18)',
     },
