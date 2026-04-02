@@ -4,6 +4,7 @@ import { useFocusEffect, useNavigation, useRoute, RouteProp } from '@react-navig
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { carregarListas, Item, Lista, salvarLista } from '../src/services/storage';
+import { COLORS } from '../src/styles';
 
 type RootStackParamList = { Home: undefined, CreateListScreen: { listId?: string } | undefined, MyLists: undefined, ListDetails: { listId: string } };
 type ListDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'ListDetails'>;
@@ -157,7 +158,7 @@ export default function ListDetails() {
 			{/* Header */}
 			<Animated.View style={[styles.header, { transform: [{ translateY: headerTranslate }] }]}> 
 				<TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-					<Ionicons name="arrow-back" size={28} color="#000" />
+					<Ionicons name="arrow-back" size={28} color={COLORS.text} />
 				</TouchableOpacity>
 
 				<View style={styles.headerCenter}>
@@ -171,7 +172,7 @@ export default function ListDetails() {
 					style={styles.editButton}
 					onPress={() => navigation.navigate('CreateListScreen', { listId })}
 				>
-					<Ionicons name="pencil" size={16} color="#ffffff" />
+					<Ionicons name="pencil" size={16} color={COLORS.onBrand} />
 					<Text style={styles.editButtonText}>Editar</Text>
 				</TouchableOpacity>
 			</Animated.View>
@@ -221,7 +222,7 @@ export default function ListDetails() {
 									style={[styles.checkbox, item.completed && styles.checkboxChecked]}
 									onPress={() => toggleItem(item.id)}
 								>
-									{item.completed && <Ionicons name="checkmark" size={16} color="#ffffff" />}
+									{item.completed && <Ionicons name="checkmark" size={16} color={COLORS.onBrand} />}
 								</TouchableOpacity>
 
 								<View style={styles.itemInfo}>
@@ -262,7 +263,7 @@ export default function ListDetails() {
 					<Ionicons
 						name={finalizada ? 'refresh-outline' : 'checkmark-done-outline'}
 						size={20}
-						color="#ffffff"
+						color={COLORS.onBrand}
 					/>
 					<Text style={styles.footerButtonText}>
 						{finalizada ? 'Reativar Lista' : 'Finalizar Lista'}
@@ -276,7 +277,7 @@ export default function ListDetails() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#ebebeb',
+		backgroundColor: COLORS.background,
 		paddingHorizontal: 16,
 		paddingTop: 16,
 	},
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
 	headerTitle: {
 		fontSize: 20,
 		fontWeight: 'bold',
-		color: '#1a1a1a',
+		color: COLORS.text,
 		flexShrink: 1,
 	},
 	badge: {
@@ -306,20 +307,20 @@ const styles = StyleSheet.create({
 		paddingVertical: 3,
 	},
 	badgeAtiva: {
-		backgroundColor: '#0a7a38',
+		backgroundColor: COLORS.brand,
 	},
 	badgeFinalizada: {
-		backgroundColor: '#8a8a8a',
+		backgroundColor: COLORS.muted,
 	},
 	badgeText: {
 		fontSize: 11,
-		color: '#ffffff',
+		color: COLORS.onBrand,
 		fontWeight: 'bold',
 	},
 	editButton: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#1b7a2b',
+		backgroundColor: COLORS.cta,
 		borderRadius: 8,
 		paddingVertical: 8,
 		paddingHorizontal: 12,
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
 	},
 	editButtonText: {
 		fontSize: 13,
-		color: '#ffffff',
+		color: COLORS.onBrand,
 		fontWeight: 'bold',
 	},
 	content: {
@@ -338,11 +339,11 @@ const styles = StyleSheet.create({
 		gap: 16,
 	},
 	summaryCard: {
-		backgroundColor: '#ffffff',
+		backgroundColor: COLORS.surface,
 		borderRadius: 14,
 		padding: 16,
 		borderWidth: 1,
-		borderColor: '#cfcfcf',
+		borderColor: COLORS.border,
 	},
 	summaryRow: {
 		flexDirection: 'row',
@@ -352,24 +353,24 @@ const styles = StyleSheet.create({
 	},
 	summaryLabel: {
 		fontSize: 14,
-		color: '#2a2a2a',
+		color: COLORS.text,
 		fontWeight: 'bold',
 	},
 	summaryValue: {
 		fontSize: 14,
-		color: '#2a2a2a',
+		color: COLORS.text,
 		fontWeight: 'bold',
 	},
 	progressTrack: {
 		height: 8,
-		backgroundColor: '#d0d0d0',
+		backgroundColor: COLORS.border,
 		borderRadius: 8,
 		overflow: 'hidden',
 		marginBottom: 12,
 	},
 	progressFill: {
 		height: '100%',
-		backgroundColor: '#2b7d32',
+		backgroundColor: COLORS.brand,
 		borderRadius: 8,
 	},
 	summaryRowBottom: {
@@ -379,20 +380,20 @@ const styles = StyleSheet.create({
 	},
 	totalLabel: {
 		fontSize: 14,
-		color: '#2a2a2a',
+		color: COLORS.text,
 		fontWeight: 'bold',
 	},
 	totalValue: {
 		fontSize: 18,
-		color: '#2f7d32',
+		color: COLORS.cta,
 		fontWeight: 'bold',
 	},
 	itemsCard: {
-		backgroundColor: '#ffffff',
+		backgroundColor: COLORS.surface,
 		borderRadius: 14,
 		padding: 16,
 		borderWidth: 1,
-		borderColor: '#cfcfcf',
+		borderColor: COLORS.border,
 	},
 	itemRow: {
 		flexDirection: 'row',
@@ -400,28 +401,28 @@ const styles = StyleSheet.create({
 		padding: 12,
 		borderRadius: 14,
 		borderWidth: 1,
-		borderColor: '#9c9c9c',
+		borderColor: COLORS.border,
 		marginBottom: 10,
 	},
 	itemRowCompleted: {
-		backgroundColor: '#dfffd0',
+		backgroundColor: COLORS.successSoft,
 	},
 	itemRowDefault: {
-		backgroundColor: '#f0f0f0',
+		backgroundColor: COLORS.surface,
 	},
 	checkbox: {
 		width: 45,
 		height: 45,
 		borderRadius: 6,
 		borderWidth: 1,
-		borderColor: '#8c8c8c',
+		borderColor: COLORS.border,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#e2e2e2',
+		backgroundColor: COLORS.surface,
 	},
 	checkboxChecked: {
-		backgroundColor: '#2f7d32',
-		borderColor: '#2f7d32',
+		backgroundColor: COLORS.cta,
+		borderColor: COLORS.cta,
 	},
 	itemInfo: {
 		flex: 1,
@@ -429,16 +430,16 @@ const styles = StyleSheet.create({
 	itemTitle: {
 		fontSize: 16,
 		fontWeight: 'bold',
-		color: '#1a1a1a',
+		color: COLORS.text,
 		marginBottom: 4,
 	},
 	itemTitleCompleted: {
 		textDecorationLine: 'line-through',
-		color: '#4c4c4c',
+		color: COLORS.muted,
 	},
 	itemSubtitle: {
 		fontSize: 14,
-		color: '#4c4c4c',
+		color: COLORS.muted,
 		marginBottom: 4,
 	},
 	priceRow: {
@@ -447,16 +448,16 @@ const styles = StyleSheet.create({
 	},
 	priceLabel: {
 		fontSize: 12,
-		color: '#2f2f2f',
+		color: COLORS.text,
 		fontWeight: 'bold',
 	},
 	priceInputRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#f5f5f5',
+		backgroundColor: COLORS.background,
 		borderRadius: 8,
 		borderWidth: 1,
-		borderColor: '#cfcfcf',
+		borderColor: COLORS.border,
 		paddingHorizontal: 8,
 		paddingVertical: 6,
 		gap: 6,
@@ -464,19 +465,19 @@ const styles = StyleSheet.create({
 	},
 	pricePrefix: {
 		fontSize: 14,
-		color: '#4c4c4c',
+		color: COLORS.muted,
 		fontWeight: 'bold',
 	},
 	priceInput: {
 		flex: 1,
 		fontSize: 14,
-		color: '#1a1a1a',
+		color: COLORS.text,
 		fontWeight: 'bold',
 		padding: 0,
 	},
 	emptyText: {
 		fontSize: 14,
-		color: '#6a6a6a',
+		color: COLORS.muted,
 		textAlign: 'center',
 		fontWeight: 'bold',
 	},
@@ -485,9 +486,9 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: '#ebebeb',
+		backgroundColor: COLORS.background,
 		borderTopWidth: 1,
-		borderTopColor: '#d0d0d0',
+		borderTopColor: COLORS.border,
 		paddingHorizontal: 16,
 		paddingVertical: 14,
 	},
@@ -500,14 +501,14 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 	footerButtonFinalizar: {
-		backgroundColor: '#1b7a2b',
+		backgroundColor: COLORS.cta,
 	},
 	footerButtonReativar: {
-		backgroundColor: '#8a8a8a',
+		backgroundColor: COLORS.muted,
 	},
 	footerButtonText: {
 		fontSize: 18,
-		color: '#ffffff',
+		color: COLORS.onBrand,
 		fontWeight: 'bold',
 	},
 });

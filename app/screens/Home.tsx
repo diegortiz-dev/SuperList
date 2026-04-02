@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Animated, Easing, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { COLORS } from '../src/styles';
 
 type RootStackParamList = { Home: undefined, CreateListScreen: undefined, MyLists: undefined, ListDetails: { listId: string } };
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
@@ -82,34 +83,36 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#ebebeb',
+        backgroundColor: COLORS.background,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
     },
     card: {
-        backgroundColor: '#ffffff',
+        backgroundColor: COLORS.surface,
         borderRadius: 24,
         paddingVertical: 40,
         paddingHorizontal: 30,
         alignItems: 'center',
         width: '100%',
         maxWidth: 420,
-        elevation: 5,
-        boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.12)',
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        elevation: 4,
+        boxShadow: COLORS.shadow,
         height: 500,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#1a1a1a',
+        color: COLORS.text,
         textAlign: 'center',
         marginBottom: 10,
       
     },
     subtitle: {
         fontSize: 15,
-        color: '#656565ff',
+        color: COLORS.muted,
         textAlign: 'center',
         lineHeight: 22,
         marginBottom: 30,
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
 
     },
     btnCriar: {
-        backgroundColor: '#1b7a2b',
+        backgroundColor: COLORS.cta,
         borderRadius: 16,
         paddingVertical: 16,
         paddingHorizontal: 20,
@@ -133,17 +136,17 @@ const styles = StyleSheet.create({
     },
     btnCriarIcon: {
         fontSize: 26,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
         marginRight: 24,
     },
     btnCriarText: {
         fontSize: 22,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
     btnVer: {
-        backgroundColor: '#ff751f',
+        backgroundColor: COLORS.brand,
         borderRadius: 12,
         paddingVertical: 16,
         paddingHorizontal: 20,
@@ -155,13 +158,13 @@ const styles = StyleSheet.create({
     },
     btnVerIcon: {
         fontSize: 22,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
         marginRight: 10,
     },
     btnVerText: {
         fontSize: 22,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
     creditos: {
@@ -171,7 +174,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         marginTop: 20,
         fontSize: 14,
-        color: '#656565ff',
+        color: COLORS.muted,
         alignSelf: 'center',
         textAlign: 'center',
         marginBottom: 18,

@@ -4,6 +4,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { carregarListas, Lista, DeletarLista, CopiarLista } from '../src/services/storage';
+import { COLORS } from '../src/styles';
 
 const MENU_WIDTH = 170;
 const MENU_HEIGHT = 160;
@@ -195,7 +196,7 @@ export default function MyLists() {
                 <View style={styles.headerLeft}>
 
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Ionicons name="arrow-back" size={28} color="#000" />
+                        <Ionicons name="arrow-back" size={28} color={COLORS.text} />
                     </TouchableOpacity>
 
                     <Text style={styles.headerTitle}>Minhas Listas</Text>
@@ -206,7 +207,7 @@ export default function MyLists() {
                     style={[styles.headerButton, { transform: [{ scale: ctaScale }] }]}
                     onPress={() => navigation.navigate('CreateListScreen')}
                 >
-                    <Ionicons name="cart" size={18} color="#ffffff" />
+                    <Ionicons name="cart" size={18} color={COLORS.onBrand} />
                     <Text style={styles.headerButtonText}>Nova Lista</Text>
                 </TouchableOpacity>
 
@@ -242,7 +243,7 @@ export default function MyLists() {
 
                 {listas.length === 0 && (
                     <Animated.View style={[styles.emptyState, { opacity: screenOpacity }]}> 
-                        <Ionicons name="cart-outline" size={64} color="#b0b0b0" />
+                        <Ionicons name="cart-outline" size={64} color={COLORS.muted} />
                         <Text style={styles.emptyTitle}>Nenhuma lista ainda</Text>
                         <Text style={styles.emptySubtitle}>Crie sua primeira lista de compras tocando em "Nova Lista"</Text>
                     </Animated.View>
@@ -292,7 +293,7 @@ export default function MyLists() {
                                         onPress={(e) => { e.stopPropagation(); openMenu(lista.id); }}
                                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                                     >
-                                        <Ionicons name="ellipsis-vertical" size={18} color="#111" />
+                                        <Ionicons name="ellipsis-vertical" size={18} color={COLORS.text} />
                                     </TouchableOpacity>
                                 </View>
 
@@ -344,7 +345,7 @@ export default function MyLists() {
                                         if (menuLista) navigation.navigate('CreateListScreen', { listId: menuLista.id });
                                     }}
                                 >
-                                    <Ionicons name="pencil-outline" size={15} color="#333" />
+                                    <Ionicons name="pencil-outline" size={15} color={COLORS.text} />
                                     <Text style={styles.menuButtonText}>Editar Lista</Text>
                                 </TouchableOpacity>
 
@@ -352,7 +353,7 @@ export default function MyLists() {
                                     style={styles.menuButton}
                                     onPress={() => menuLista && handleCopy(menuLista.id)}
                                 >
-                                    <Ionicons name="copy-outline" size={15} color="#333" />
+                                    <Ionicons name="copy-outline" size={15} color={COLORS.text} />
                                     <Text style={styles.menuButtonText}>Copiar Lista</Text>
                                 </TouchableOpacity>
 
@@ -360,7 +361,7 @@ export default function MyLists() {
                                     style={[styles.menuButton, styles.menuButtonLast]}
                                     onPress={() => menuLista && handleDelete(menuLista.id)}
                                 >
-                                    <Ionicons name="trash-outline" size={15} color="#c0392b" />
+                                    <Ionicons name="trash-outline" size={15} color={COLORS.danger} />
                                     <Text style={[styles.menuButtonText, styles.menuButtonTextDanger]}>Excluir Lista</Text>
                                 </TouchableOpacity>
 
@@ -379,7 +380,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#ebebeb',
+        backgroundColor: COLORS.background,
         paddingHorizontal: 16,
         paddingTop: 16,
     },
@@ -400,14 +401,14 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#1a1a1a',
+        color: COLORS.text,
         marginLeft: 10,
     },
 
     headerButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#1b7a2b',
+        backgroundColor: COLORS.cta,
         borderRadius: 6,
         paddingVertical: 6,
         paddingHorizontal: 10,
@@ -418,7 +419,7 @@ const styles = StyleSheet.create({
 
     headerButtonText: {
         fontSize: 14,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
 
@@ -430,27 +431,27 @@ const styles = StyleSheet.create({
 
     filterButton: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: COLORS.surface,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#cfcfcf',
+        borderColor: COLORS.border,
         paddingVertical: 10,
         alignItems: 'center',
     },
 
     filterButtonActive: {
-        backgroundColor: '#1b7a2b',
-        borderColor: '#1b7a2b',
+        backgroundColor: COLORS.brand,
+        borderColor: COLORS.brand,
     },
 
     filterButtonText: {
         fontSize: 13,
         fontWeight: 'bold',
-        color: '#1a1a1a',
+        color: COLORS.text,
     },
 
     filterButtonTextActive: {
-        color: '#ffffff',
+        color: COLORS.onBrand,
     },
 
     content: {
@@ -459,12 +460,12 @@ const styles = StyleSheet.create({
     },
 
     listCard: {
-        backgroundColor: '#ffffff',
+        backgroundColor: COLORS.surface,
         borderRadius: 14,
         paddingVertical: 14,
         paddingHorizontal: 16,
         borderWidth: 1,
-        borderColor: '#8f8f8f',
+        borderColor: COLORS.border,
     },
 
     cardTopRow: {
@@ -488,14 +489,14 @@ const styles = StyleSheet.create({
 
     menuContainer: {
         position: 'absolute',
-        backgroundColor: '#ffffff',
+        backgroundColor: COLORS.surface,
         borderWidth: 1,
-        borderColor: '#cfcfcf',
+        borderColor: COLORS.border,
         borderRadius: 10,
         overflow: 'hidden',
         width: MENU_WIDTH,
         elevation: 12,
-        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.18)',
+        boxShadow: COLORS.shadow,
     },
 
     menuButton: {
@@ -505,7 +506,7 @@ const styles = StyleSheet.create({
         paddingVertical: 13,
         paddingHorizontal: 14,
         borderBottomWidth: 1,
-        borderBottomColor: '#efefef',
+        borderBottomColor: COLORS.border,
     },
 
     menuButtonLast: {
@@ -513,19 +514,19 @@ const styles = StyleSheet.create({
     },
 
     menuButtonText: {
-        color: '#333',
+        color: COLORS.text,
         fontWeight: '600',
         fontSize: 14,
     },
 
     menuButtonTextDanger: {
-        color: '#c0392b',
+        color: COLORS.danger,
     },
 
     listTitle: {
         fontSize: 17,
         fontWeight: 'bold',
-        color: '#1a1a1a',
+        color: COLORS.text,
         flexShrink: 1,
     },
 
@@ -536,22 +537,22 @@ const styles = StyleSheet.create({
     },
 
     badgeAtiva: {
-        backgroundColor: '#0a7a38',
+        backgroundColor: COLORS.brand,
     },
 
     badgeFinalizada: {
-        backgroundColor: '#8a8a8a',
+        backgroundColor: COLORS.muted,
     },
 
     badgeText: {
         fontSize: 11,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
 
     listDate: {
         fontSize: 12,
-        color: '#8f8f8f',
+        color: COLORS.muted,
         marginTop: 4,
     },
 
@@ -564,12 +565,12 @@ const styles = StyleSheet.create({
 
     listProgress: {
         fontSize: 14,
-        color: '#3d3d3d',
+        color: COLORS.text,
     },
 
     listPrice: {
         fontSize: 16,
-        color: '#2f7d32',
+        color: COLORS.cta,
         fontWeight: 'bold',
     },
 
@@ -583,14 +584,14 @@ const styles = StyleSheet.create({
     emptyTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#555555',
+        color: COLORS.text,
         marginTop: 16,
         marginBottom: 8,
     },
 
     emptySubtitle: {
         fontSize: 14,
-        color: '#888888',
+        color: COLORS.muted,
         textAlign: 'center',
         lineHeight: 20,
     },

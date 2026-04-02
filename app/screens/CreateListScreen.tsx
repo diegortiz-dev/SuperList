@@ -4,6 +4,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { SalvarItem, salvarLista, Item, DeletarItem, carregarListas } from '../src/services/storage';
+import { COLORS } from '../src/styles';
 
 const UNIDADES = ['un', 'kg', 'g', 'L', 'ml', 'cx', 'pct'];
 
@@ -148,7 +149,7 @@ function renderCard({ item }: { item: Item }) {
                         style={styles.cardCloseButton}
                         onPress={() => handleRemover(item.id)}
                          hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}>
-                        <Ionicons name="close-outline" size={30} color="#ff0000ff" />
+                        <Ionicons name="close-outline" size={30} color={COLORS.danger} />
                 </TouchableOpacity>
             </View>
     );
@@ -164,7 +165,7 @@ function renderCard({ item }: { item: Item }) {
                 <Animated.ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} style={{ opacity: screenOpacity }}>
                     <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslate }] }]}> 
                         <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                            <Ionicons name="arrow-back" size={32} color="#000000ff" />
+                            <Ionicons name="arrow-back" size={32} color={COLORS.text} />
                         </TouchableOpacity>
                         <Text style={styles.headerTitle}>{isEditing ? 'Editar Lista' : 'Nova Lista de Compras'}</Text>
                     </Animated.View>
@@ -259,7 +260,7 @@ function renderCard({ item }: { item: Item }) {
 
 const styles = StyleSheet.create({
     carditens: {
-        backgroundColor: '#f0f7f0',
+        backgroundColor: COLORS.successSoft,
         borderRadius: 12,
         paddingVertical: 10,
         paddingHorizontal: 14,
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         borderWidth: 1,
-        borderColor: '#d4e8d4',
+        borderColor: COLORS.successBorder,
     },
     cardTextColumn: {
         flex: 1,
@@ -282,40 +283,40 @@ const styles = StyleSheet.create({
     },
     divider: {
         height: 1,
-        backgroundColor: '#e0e0e0',
+        backgroundColor: COLORS.border,
         marginVertical: 16,
         width: '100%',
     },
     input: {
         fontSize: 15,
-        color: '#333333',
+        color: COLORS.text,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: COLORS.border,
         marginBottom: 10,
         padding: 12,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: COLORS.surface,
         borderRadius: 12,
         height: 48,
     },
     gobackbutton: {
         fontSize: 50,
-        color: '#1a1a1a',
+        color: COLORS.text,
         marginBottom: 20,
     },
     cardNome: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#1a3d1a',
+        color: COLORS.text,
         marginBottom: 2,
     },
     cardQtd: {
         fontSize: 14,
-        color: '#4a7a4a',
+        color: COLORS.muted,
         fontWeight: '600',
     },
     container: {
         flex: 1,
-        backgroundColor: '#ebebeb',
+        backgroundColor: COLORS.background,
         padding: 20,
     },
     scrollContent: {
@@ -332,32 +333,34 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#1a1a1a',
+        color: COLORS.text,
         marginLeft: 12,
     },
     card: {
-        backgroundColor: '#ffffff',
+        backgroundColor: COLORS.surface,
         borderRadius: 20,
         paddingVertical: 18,
         paddingHorizontal: 20,
         width: '100%',
         maxWidth: 420,
+        borderWidth: 1,
+        borderColor: COLORS.border,
         elevation: 3,
-        boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
+        boxShadow: COLORS.shadow,
         marginTop: 20,
         alignSelf: 'center',
     },
     cardSectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#1a1a1a',
+        color: COLORS.text,
         textAlign: 'left',
         marginBottom: 12,
     },
     label: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#555555',
+        color: COLORS.muted,
         marginBottom: 6,
         marginTop: 2,
         textTransform: 'uppercase',
@@ -366,13 +369,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#1a1a1a',
+        color: COLORS.text,
         textAlign: 'left',
         marginBottom: 10,
     },
     subtitle: {
         fontSize: 14,
-        color: '#888888',
+        color: COLORS.muted,
         textAlign: 'center',
         lineHeight: 22,
         marginBottom: 20,
@@ -383,7 +386,7 @@ const styles = StyleSheet.create({
         gap: 14,
     },
     btn: {
-        backgroundColor: '#1b7a2b',
+        backgroundColor: COLORS.cta,
         borderRadius: 14,
         paddingVertical: 14,
         paddingHorizontal: 20,
@@ -394,20 +397,20 @@ const styles = StyleSheet.create({
         height: 56,
     },
     btnDisabled: {
-        backgroundColor: '#9fb9a4',
+        backgroundColor: COLORS.ctaDisabled,
     },
     btnText: {
         fontSize: 18,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
     btnicone: {
         fontSize: 18,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
     btnSecondary: {
-        backgroundColor: '#1a1a1a',
+        backgroundColor: COLORS.brand,
         borderRadius: 16,
         paddingVertical: 16,
         paddingHorizontal: 20,
@@ -418,7 +421,7 @@ const styles = StyleSheet.create({
     },
     btnSecondaryText: {
         fontSize: 20,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
     footer: {
@@ -426,14 +429,14 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: '#ebebeb',
+        backgroundColor: COLORS.background,
         borderTopWidth: 1,
-        borderTopColor: '#d0d0d0',
+        borderTopColor: COLORS.border,
         paddingHorizontal: 20,
         paddingVertical: 16,
     },
     footerButton: {
-        backgroundColor: '#1b7a2b',
+        backgroundColor: COLORS.cta,
         borderRadius: 14,
         paddingVertical: 16,
         paddingHorizontal: 20,
@@ -442,11 +445,11 @@ const styles = StyleSheet.create({
         height: 56,
     },
     footerButtonDisabled: {
-        backgroundColor: '#9fb9a4',
+        backgroundColor: COLORS.ctaDisabled,
     },
     footerButtonText: {
         fontSize: 18,
-        color: '#ffffff',
+        color: COLORS.onBrand,
         fontWeight: 'bold',
     },
     row: {
@@ -463,12 +466,12 @@ const styles = StyleSheet.create({
     },
     inputSmall: {
         fontSize: 16,
-        color: '#333333',
+        color: COLORS.text,
         fontWeight: 'bold',
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: COLORS.border,
         padding: 10,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: COLORS.surface,
         borderRadius: 12,
         textAlign: 'center',
         marginBottom: 10,
@@ -482,27 +485,27 @@ const styles = StyleSheet.create({
     },
     unitChip: {
         borderWidth: 1,
-        borderColor: '#c8c8c8',
+        borderColor: COLORS.border,
         borderRadius: 20,
         paddingHorizontal: 14,
         paddingVertical: 6,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: COLORS.surface,
         width: 55,
         height: 45,
         justifyContent: 'center',
 
     },
     unitChipSelected: {
-        backgroundColor: '#1b7a2b',
-        borderColor: '#1b7a2b',
+        backgroundColor: COLORS.brand,
+        borderColor: COLORS.brand,
     },
     unitChipText: {
         fontSize: 15,
-        color: '#555555',
+        color: COLORS.muted,
         fontWeight: 'bold',
         alignSelf: 'center',
     },
     unitChipTextSelected: {
-        color: '#ffffff',
+        color: COLORS.onBrand,
     },
 })
